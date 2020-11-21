@@ -423,9 +423,5 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         self.performSegue(withIdentifier: "findFriends", sender: self)
     }
     
-
-
-
-    
 }
 
