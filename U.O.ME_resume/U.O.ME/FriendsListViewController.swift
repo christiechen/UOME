@@ -78,8 +78,7 @@ class FriendsListViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.backgroundColor = UIColor.blue
-        // Do any additional setup after loading the view.
+
         let ref = Database.database().reference()
         guard let uid = FirebaseAuth.Auth.auth().currentUser?.uid else { return }
         

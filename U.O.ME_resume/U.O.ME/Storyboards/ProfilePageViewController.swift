@@ -106,6 +106,8 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var usernameLabel: UILabel!
     
+    //Christie Chen
+    //loads all data for the current user
     func loadCurrentUserData(){
         
         print ("loading current data")
@@ -125,7 +127,6 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
                 for name in friendNames{
                     print(name)
                     if(name == "default"){
-                        print("here is a default")
                         continue
                     }
                     self.currentUserFriends[name] = friends[name] as! Double
@@ -138,7 +139,7 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         }
     }
     
-    
+    //Jiwoo Seo
     func loadProfileImage() {
         ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             // Get user value
@@ -158,6 +159,7 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         
         
     }
+    //Jiwoo Seo
     @IBAction func logOut(_ sender: Any) {
         let firebaseAuth = Auth.auth()
         do {
@@ -184,8 +186,7 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         for view in subviews{
             view.removeFromSuperview()
         }
-        print("LOADING TABLE")
-        print("THIS TABLE HERE")
+        
         print(currentUserFriends)
         let sortedFriends = currentUserFriends.sorted(by: <)
         print(numFriends)
@@ -224,7 +225,12 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         
         
     }
-        
+    
+    
+    //Christie Chen
+    //with every refresh, searches the database and updates how much the current user owes all their friends
+    //individually/ how much each friend individually owes the current user.
+    //The if the user has already paid their friend/ has already been paid, the amount owed updates to reflect such
     func updateResultAll(){
              
              let ref = Database.database().reference()
@@ -258,19 +264,17 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
                      var count = 0 //how many receipts have been processed thus far
                      for receipt in receiptNumbers{
                     
+                        //for each receipt:
                          ref.child("/groupData/" + keys + "/receipts/" + receipt).observeSingleEvent(of: .value){
                              (snapshot) in
                              let value = snapshot.value as! [String:Any]
 
-                            print("HASPAYED")
-                            print(value["payed"] as! [String:String])
                             let hasPayed = value["payed"] as! [String:String]
-                             let processed = value["processed"] as! String
+                            let processed = value["processed"] as! String
                             receiptList[receipt] = hasPayed
                             receiptList[receipt]!["generalProcess"] = processed
                             for (name, payed) in hasPayed{
                                 receiptList[receipt]![name] = payed
-
                             }
                          }
                          count = count + 1
@@ -296,7 +300,6 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
                                              }
                                          payData[member] = allFriends
 
-                                        print(payData)
                                          if(member == groupMembers.last){ //payData is finalized
                                              for receipt in receiptList.keys{
                                                  ref.child("/groupData/" + keys + "/receipts/" + receipt).observeSingleEvent(of: .value){
@@ -304,39 +307,38 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
                                                      let receiptInfo = snapshot.value as! [String:Any]
                  
                                                      let payedBy = receiptInfo["payedBy"] as! String
-                 print(receipt + " was payed by " + payedBy)
+                
                                                      let priceSplit = receiptInfo["priceSplit"] as! Double
-                 print("everyone owes \(priceSplit)")
+                 
 
                                                          for member in groupMembers{
-                 print(receipt + "NOW UPDATING " + member )
+                 
                  
                                                              if(member == payedBy){ //everyone owes this person money, updates all fields in the person's friends list
-                 print(member + " payed for this")
+
                                                                  let friends = payData[member]!.keys
                                                                  for friend in friends{ //go through friends again and update all values
                                                                     if(!groupMembers.contains(friend)){
-                print(friend + " is not in this group")
+
                                                                         continue
                                                                     }
 
                                                                    if(receiptList[receipt]![friend] == "false" && receiptList[receipt]!["generalProcess"] == "false"){ //friend still has to pay and the receipt has not even been processed
-                  print(friend + "has not payed yet")
+                  
 
                                                                         var origOwed = payData[member]![friend]!
                                                                         var newOwed = origOwed - priceSplit
-print(receipt + "\t updating " + friend + "'s data from \(origOwed) to \(newOwed) in " + member + "'s friend list" )
+
 
                                                                         payData[member]![friend] = newOwed
 
                                                                         
                                                                     }
                                                                    else if(receiptList[receipt]![friend] == "true" && receiptList[receipt]!["generalProcess"] == "true"){ //the receipt has been processed (so initial values are in) and the friend has paid
-                    print( friend + " already paid")
+                    
                                                                         var origOwed = payData[member]![friend]!
                                                                         var newOwed = origOwed + priceSplit //this expense is removed
-                print(receipt + "\t updating " + friend + "'s data from \(origOwed) to \(newOwed) in " + member + "'s friend list" )
-
+                
                                                                         payData[member]![friend] = newOwed
                                                                     }
                                                                     
@@ -349,12 +351,11 @@ print(receipt + "\t updating " + friend + "'s data from \(origOwed) to \(newOwed
                                                                 }
 
                                                                 if(receiptList[receipt]![member] == "false" && receiptList[receipt]!["generalProcess"] == "false"){ //friend still has to pay and the receipt needs to be processed
-                    print(member + " has not payed yet")
                                                                     var origOwed = payData[member]![payedBy]!
 
                                                                     var newOwed = origOwed + priceSplit
                                                                     payData[member]![payedBy] = newOwed
-                    print(receipt + "updating " + payedBy + "'s data from \(origOwed) to \(newOwed) in " + member + "'s friend list")
+
                                                                 }
                                                                 
                                                                 else if(receiptList[receipt]![member] == "true" && receiptList[receipt]!["generalProcess"] == "true"){  //the receipt has been processed (so initial values are in) and the friend has paid
@@ -366,7 +367,6 @@ print(receipt + "\t updating " + friend + "'s data from \(origOwed) to \(newOwed
                                                              }
                                                          }
 
-                                                         print(payData)
                                                          for person in payData.keys{
                                                              for friend in payData[person]!.keys{
                                                                  ref.child("/friends/" + person + "/" + friend).setValue(payData[person]![friend]!)
@@ -420,7 +420,6 @@ print(receipt + "\t updating " + friend + "'s data from \(origOwed) to \(newOwed
     
    
     @IBAction func addFriends(_ sender: Any) {
-        print("button pressed")
         self.performSegue(withIdentifier: "findFriends", sender: self)
     }
     
