@@ -34,7 +34,7 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
     
     
     
-    
+    //Christie Chen
     override func viewDidLoad() {
         super.viewDidLoad()
         circularProfilePic()
@@ -42,7 +42,7 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         
         guard let uid = FirebaseAuth.Auth.auth().currentUser?.uid else { return }
         
-//
+
         scrollView.contentSize = tableView.contentSize
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseCell")
         tableView.dataSource = self
@@ -51,15 +51,14 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
        tableView.addSubview(refreshControl)
-//        updateResultAll()
-//        loadCurrentUserData()
+
         self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
 
     
     }
     
 
-
+    //Christie Chen
     @objc func refresh(_ sender: AnyObject) {
        // Code to refresh table view
         currentUserFriends = [:]
@@ -73,7 +72,7 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
     }
 
 
-    
+    //Jiwoo Seo
     func circularProfilePic() {
         profileImageView.layer.borderWidth = 1
         profileImageView.layer.masksToBounds = false
@@ -81,15 +80,15 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         profileImageView.layer.cornerRadius = profileImageView.frame.height/2
         profileImageView.clipsToBounds = true
     }
+
+    //Christie Chen
     override func viewDidAppear(_ animated: Bool) {
         loadProfileImage()
         print("view did appear")
-//        updateResultAll()
-//        loadCurrentUserData()
-//        tableView.reloadData()
     }
     
     
+    //Christie Chen
     override func viewWillAppear(_ animated: Bool) {
         print("willappear")
         currentUserFriends = [:]
@@ -99,7 +98,6 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
         currentUser = "/friends/"
         numFriends = 0
         updateResultAll()
-//        tableView.reload
         Data()
     }
     
