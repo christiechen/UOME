@@ -84,13 +84,11 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
     //Christie Chen
     override func viewDidAppear(_ animated: Bool) {
         loadProfileImage()
-        print("view did appear")
     }
     
     
     //Christie Chen
     override func viewWillAppear(_ animated: Bool) {
-        print("willappear")
         currentUserFriends = [:]
         currentUserFriendsNames = []
         groups = []
@@ -107,8 +105,6 @@ class ProfilePageViewController: UIViewController, UITableViewDelegate, UITableV
     //Christie Chen
     //loads all data for the current user
     func loadCurrentUserData(){
-        
-        print ("loading current data")
         let ref = Database.database().reference()
         let test = ref.child("/users/" + uid + "/username").observeSingleEvent(of: .value){
             (snapshot) in
